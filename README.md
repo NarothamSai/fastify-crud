@@ -27,7 +27,7 @@ To run in dev mode for auto reload and pretty logging
 
 The server will be listening by default at `http://localhost:3000`
 
-[x] CRUD REST APIs
-[x] Request validations
-[x] API Documentation
-[] Tests
+- [x] CRUD REST APIs
+- [x] Request validations
+- [x] API Documentation
+- [ ] Tests
