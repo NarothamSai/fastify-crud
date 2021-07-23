@@ -1,8 +1,83 @@
 'use strict'
 
+const Student = {
+    name : {type : 'string'},
+    age : {type : 'integer'}
+}
+
+const postOpts = {
+  schema :{
+    body : Student
+  },
+  response:{
+    201: {
+      type: 'object',
+      properties:{
+        studentCreatedId: {type : 'string'}
+      }
+    }
+  }
+}
+
+const getOpts = {
+  response:{
+    200:{
+      type: 'object',
+      properties:{
+        student:{
+          type : 'array',
+          items : Student
+        }
+      }
+    }
+  }
+}
+
+const putOpts = {
+  schema :{
+    params:{
+      type: 'object',
+      properties:{
+        _id: {type : 'string', minLength: 12}
+      },
+      required: ['_id']
+    },
+    body : Student
+  },
+  response:{
+    200: {
+      type: 'object',
+      properties:{
+        matchedCount: {type : 'string'},
+        modifiedCount: {type : 'string'}
+      }
+    }
+  }
+}
+
+const deleteOpts = {
+  schema :{
+    params:{
+      type: 'object',
+      properties:{
+        _id: {type : 'string', minLength: 12}
+      },
+      required: ['_id']
+    }
+  },
+  response:{
+    200: {
+      type: 'object',
+      properties:{
+        deletedCount: {type : 'string'}
+      }
+    }
+  }
+}
+
 module.exports = async function(fastify,opts){
 
-  fastify.post("/",function(req,reply){
+  fastify.post("/",postOpts,function(req,reply){
     const db = this.mongo.db;
     db.collection('student',onCollection);
 
@@ -10,13 +85,13 @@ module.exports = async function(fastify,opts){
       if(err) return reply.send(err);
       col.insertOne(req.body,function (err, student){
         reply.code(201);
-        reply.send({student: student.insertedId});
+        reply.send({studentCreatedId: student.insertedId});
       })
     }
 
   })
 
-  fastify.get("/",function(req,reply){
+  fastify.get("/",getOpts,function(req,reply){
     const db = this.mongo.db;
     db.collection('student',onCollection);
 
@@ -24,6 +99,7 @@ module.exports = async function(fastify,opts){
 
     function onCollection(err, col){
       if(err) return reply.send({err: err});
+
       col.find({},async (err, student) => {
         replyElem = await student.toArray()
         reply.send({student : replyElem});
@@ -32,7 +108,7 @@ module.exports = async function(fastify,opts){
 
   })
 
-  fastify.put("/:_id",async function(req,reply){
+  fastify.put("/:_id", putOpts,async function(req,reply){
     let {_id} = req.params;
 
     const ObjectId = this.mongo.ObjectId;
@@ -52,7 +128,7 @@ module.exports = async function(fastify,opts){
 
   })
 
-  fastify.delete("/:_id",async function(req,reply){
+  fastify.delete("/:_id",deleteOpts,async function(req,reply){
     let {_id} = req.params;
 
     const ObjectId = this.mongo.ObjectId;
