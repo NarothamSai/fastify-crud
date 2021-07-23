@@ -3,13 +3,13 @@
 Using Fastify framework
 
 ### Prerequisites:
-Download and Install node.js > 14 [(link)](https://nodejs.org/en/download/)
-
+1. Download and Install node.js > 14 [(link)](https://nodejs.org/en/download/)
+2. MongoDB
 
 ### Setup
 ```
-mkdir student
-cd student
+mkdir fastify-crud
+cd fastify-crud
 ```
 
 For boilerplate fastify code, type
@@ -18,10 +18,16 @@ npm init fastify
 npm install
 ```
 
+Fill fields in `.env.example` and change the filename to `env`
+
+### Development
 To run in dev mode for auto reload and pretty logging
 
 `npm run-script dev`
 
-The server will be listening by default at localhost:3000
+The server will be listening by default at `http://localhost:3000`
 
-Mongodb is setup on MongoDb Atlas
+[x] CRUD REST APIs
+[x] Request validations
+[x] API Documentation
+[] Tests
