@@ -23,7 +23,9 @@
     "fastify-plugin": "^3.0.0",
     "fastify-sensible": "^3.1.0",
     "fastify-swagger": "^4.8.3",
-    "nodemon": "^2.0.12"
+    "mongoose": "^5.13.3",
+    "nodemon": "^2.0.12",
+    "qs": "^6.10.1"
   },
   "devDependencies": {
     "tap": "^15.0.9"
