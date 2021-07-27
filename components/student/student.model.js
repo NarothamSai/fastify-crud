@@ -11,7 +11,6 @@ const studentSchema = mongoose.Schema({
 )
 
 studentSchema.statics.findWithFilters= function(where={}, limit = 10, skip = 0, order=""){
-  console.log(order)
   return this.find(where).sort(order).skip(skip).limit(limit);
 }
 

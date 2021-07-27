@@ -1,13 +1,14 @@
 'use strict'
+const Student = require("../../components/student/index");
 
-const Student = {
+const StudentSchema = {
     name : {type : 'string'},
     age : {type : 'integer'}
 }
 
 const postOpts = {
   schema :{
-    body : Student
+    body : StudentSchema
   },
   response:{
     201: {
@@ -26,7 +27,7 @@ const getOpts = {
       properties:{
         student:{
           type : 'array',
-          items : Student
+          items : StudentSchema
         }
       }
     }
@@ -42,7 +43,7 @@ const putOpts = {
       },
       required: ['_id']
     },
-    body : Student
+    body : StudentSchema
   },
   response:{
     200: {
@@ -77,72 +78,15 @@ const deleteOpts = {
 
 module.exports = async function(fastify,opts){
 
-  fastify.post("/",postOpts,function(req,reply){
-    const db = this.mongo.db;
-    db.collection('student',onCollection);
+  fastify.post("/",postOpts,Student.Controller.create);
 
-    function onCollection(err, col){
-      if(err) return reply.send(err);
-      col.insertOne(req.body,function (err, student){
-        reply.code(201);
-        reply.send({studentCreatedId: student.insertedId});
-      })
-    }
+  fastify.get("/:_id",getOpts,Student.Controller.getOne);
 
-  })
+  fastify.get("/",getOpts,Student.Controller.getAll);
 
-  fastify.get("/",getOpts,function(req,reply){
-    const db = this.mongo.db;
-    db.collection('student',onCollection);
+  fastify.put("/:_id", putOpts,Student.Controller.putOne);
 
-    var replyElem = [];
+  fastify.patch("/:_id", putOpts,Student.Controller.patchOne);
 
-    function onCollection(err, col){
-      if(err) return reply.send({err: err});
-
-      col.find({},async (err, student) => {
-        replyElem = await student.toArray()
-        reply.send({student : replyElem});
-      });
-    }
-
-  })
-
-  fastify.put("/:_id", putOpts,async function(req,reply){
-    let {_id} = req.params;
-
-    const ObjectId = this.mongo.ObjectId;
-
-    _id = new ObjectId(_id);
-
-    const db = this.mongo.db;
-    const result = await db.collection('student')
-    .updateOne({_id : _id},{$set : req.body});
-
-    reply.send({
-      result : {
-        matchedCount: result.matchedCount,
-        modifiedCount: result.modifiedCount
-      }
-    });
-
-  })
-
-  fastify.delete("/:_id",deleteOpts,async function(req,reply){
-    let {_id} = req.params;
-
-    const ObjectId = this.mongo.ObjectId;
-
-    _id = new ObjectId(_id);
-
-    const db = this.mongo.db;
-    const result = await db.collection('student')
-    .deleteOne({_id : _id});
-
-    reply.send({
-      result : {
-        deletedCount: result.deletedCount,
-      }
-    });
-  })
+  fastify.delete("/:_id",deleteOpts,Student.Controller.deleteOne);
 }
