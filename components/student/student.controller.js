@@ -1,5 +1,73 @@
 const Student = require("./student.model");
-const qs = require('qs')
+const qs = require('qs');
+
+function makeMongooseSort(str){
+
+
+  let indexDesc = str.indexOf("DESC");
+  let indexAsc = str.indexOf("ASC");
+  let sort = "";
+  let strasc = [];
+  let strdesc = [];
+
+  if(indexAsc == -1 && indexDesc == -1){
+
+  }else if(indexAsc == -1){
+    strdesc = str.slice(0,indexDesc);
+    strdesc = strdesc.split(",")
+
+    for(let i= 0; i < strdesc.length; i++){
+      strdesc[i] = strdesc[i].trim();
+    }
+
+  }else if(indexDesc == -1){
+    strasc = str.slice(0,indexAsc);
+    strasc = strasc.split(",")
+
+    for(let i= 0; i < strasc.length; i++){
+      strasc[i] = strasc[i].trim();
+    }
+
+  }else if(indexDesc < indexAsc){
+    strdesc = str.slice(0,indexDesc);
+    strdesc = strdesc.split(",")
+
+    for(let i= 0; i < strdesc.length; i++){
+      strdesc[i] = strdesc[i].trim();
+    }
+
+    strasc = str.slice(indexDesc+4,indexAsc);
+    strasc = strasc.split(",")
+
+    for(let i= 0; i < strasc.length; i++){
+      strasc[i] = strasc[i].trim();
+    }
+  }else{
+    strasc = str.slice(0,indexAsc);
+    strasc = strasc.split(",")
+
+    for(let i= 0; i < strasc.length; i++){
+      strasc[i] = strasc[i].trim();
+    }
+    strdesc = str.slice(indexAsc+3,indexDesc);
+    strdesc = strdesc.split(",")
+
+    for(let i= 0; i < strdesc.length; i++){
+      strdesc[i] = strdesc[i].trim();
+    }
+  }
+
+  for(let i= 0; i < strasc.length; i++){
+    if(strasc[i]!="")
+    sort += strasc[i] + " ";
+  }
+  for(let i= 0; i < strdesc.length; i++){
+    if(strdesc[i]!="")
+    sort += "-" + strdesc[i] + " ";
+  }
+  return sort;
+}
+
 module.exports = {
 
   create: async function(req,reply){
@@ -20,69 +88,69 @@ module.exports = {
       let filter = {};
       try{
         filter = await JSON.parse(req.query.filter);
-        filter.sort = filter.order;
+        filter.sort = makeMongooseSort(filter.order);
       }catch(err){
         req.log.error(err);
       }
 
       // const student = await Student.find(filter);
       const student = await Student.findWithFilters(filter.where,
-                          filter.limit,filter.skip,filter.sort);
-      reply.code(200).send({students: student});
-    }catch(err){
-      req.log.error(err);
-      reply.code(500).send(err);
+        filter.limit,filter.skip,filter.sort);
+        reply.code(200).send({students: student});
+      }catch(err){
+        req.log.error(err);
+        reply.code(500).send(err);
+      }
+    },
+
+    getOne: async function(req,reply){
+      try{
+        const _id = req.params._id;
+        const student = await Student.findById(_id);
+
+        reply.code(200).send({student: student});
+      }catch(err){
+        req.log.error(err);
+        reply.code(500).send(err);
+      }
+    },
+
+    putOne: async function(req,reply){
+      try{
+        const _id = req.params._id;
+        const updates = req.body;
+        const student = await Student.findOneAndReplace({_id: _id},updates,{new:true});
+
+        reply.code(200).send({student: student});
+      }catch(err){
+        req.log.error(err);
+        reply.code(500).send(err);
+      }
+    },
+
+    patchOne: async function(req,reply){
+      try{
+        const _id = req.params._id;
+        const updates = req.body;
+        const student = await Student.findByIdAndUpdate(_id,{$set:updates},{new:true});
+
+        reply.code(200).send({student: student});
+      }catch(err){
+        req.log.error(err);
+        reply.code(500).send(err);
+      }
+    },
+
+    deleteOne: async function(req,reply){
+      try{
+        const _id = req.params._id;
+        const student = await Student.findByIdAndRemove(_id);
+
+        reply.code(200).send({student: student});
+      }catch(err){
+        req.log.error(err);
+        reply.code(500).send(err);
+      }
     }
-  },
 
-  getOne: async function(req,reply){
-    try{
-      const _id = req.params._id;
-      const student = await Student.findById(_id);
-
-      reply.code(200).send({student: student});
-    }catch(err){
-      req.log.error(err);
-      reply.code(500).send(err);
-    }
-  },
-
-  putOne: async function(req,reply){
-    try{
-      const _id = req.params._id;
-      const updates = req.body;
-      const student = await Student.findOneAndReplace({_id: _id},updates,{new:true});
-
-      reply.code(200).send({student: student});
-    }catch(err){
-      req.log.error(err);
-      reply.code(500).send(err);
-    }
-  },
-
-  patchOne: async function(req,reply){
-    try{
-      const _id = req.params._id;
-      const updates = req.body;
-      const student = await Student.findByIdAndUpdate(_id,{$set:updates},{new:true});
-
-      reply.code(200).send({student: student});
-    }catch(err){
-      req.log.error(err);
-      reply.code(500).send(err);
-    }
-  },
-
-  deleteOne: async function(req,reply){
-    try{
-      const _id = req.params._id;
-      const student = await Student.findByIdAndRemove(_id);
-
-      reply.code(200).send({student: student});
-    }catch(err){
-      req.log.error(err);
-      reply.code(500).send(err);
-    }
   }
-
-}
