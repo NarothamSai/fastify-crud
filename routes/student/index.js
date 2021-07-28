@@ -28,6 +28,7 @@ const ErrorResponse = {
 
 const postOpts = {
   schema :{
+    "tags": ['student'],
     "body" : {
       "type": 'object',
       "required": ['name', 'age', 'rollno'],
@@ -59,6 +60,7 @@ const postOpts = {
 
 const getOpts = {
   schema : {
+    "tags": ['student'],
     response:{
       200:{
         type: 'object',
@@ -84,6 +86,7 @@ const getOpts = {
 
 const getOneOpts = {
   schema : {
+    "tags": ['student'],
     params:{
       type: 'object',
       properties:{
@@ -112,6 +115,7 @@ const getOneOpts = {
 
 const putOpts = {
   schema :{
+    "tags": ['student'],
     params:{
       type: 'object',
       properties:{
@@ -151,6 +155,7 @@ const putOpts = {
 
 const patchOpts = {
   schema :{
+    "tags": ['student'],
     params:{
       type: 'object',
       properties:{
@@ -189,6 +194,7 @@ const patchOpts = {
 
 const deleteOpts = {
   schema :{
+    "tags": ['student'],
     params:{
       type: 'object',
       properties:{

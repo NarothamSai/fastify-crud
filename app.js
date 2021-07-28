@@ -23,7 +23,10 @@ module.exports = async function (fastify, opts) {
       host: 'localhost:3000',
       schemes: ['http'],
       consumes: ['application/json'],
-      produces: ['application/json']
+      produces: ['application/json'],
+      tags : [
+        { name : 'student', description: "student related end points"}
+      ]
     },
     hideUntagged: false,
     exposeRoute: true
