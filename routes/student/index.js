@@ -121,12 +121,13 @@ const putOpts = {
     },
     "body" : {
       "type": 'object',
-      "required": ['name', 'age', 'rollno'],
+      "required": ['name', 'age', 'rollno', 'statusid'],
       "additionalProperties": false,
       "properties":{
         "name" : {type : 'string'},
         "age" : {type : 'integer'},
-        "rollno": {type: 'string'}
+        "rollno": {type: 'string'},
+        "statusid":{type : 'integer'}
       }
     },
     "response":{
@@ -163,7 +164,8 @@ const patchOpts = {
       "properties":{
         "name" : {type : 'string'},
         "age" : {type : 'integer'},
-        "rollno": {type: 'string'}
+        "rollno": {type: 'string'},
+        "statusid":{type : 'integer'}
       }
     },
     "response":{
