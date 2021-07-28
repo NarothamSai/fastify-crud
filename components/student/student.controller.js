@@ -85,7 +85,7 @@ module.exports = {
   getAll: async function(req,reply){
     try{
 
-      let filter = {};
+      let filter = { where : {}, sort : "", skip : 0, limit : 10};
       try{
         filter = await JSON.parse(req.query.filter);
         filter.sort = makeMongooseSort(filter.order);
@@ -93,64 +93,72 @@ module.exports = {
         req.log.error(err);
       }
 
-      // const student = await Student.find(filter);
-      const student = await Student.findWithFilters(filter.where,
-        filter.limit,filter.skip,filter.sort);
-        reply.code(200).send({students: student});
-      }catch(err){
-        req.log.error(err);
-        reply.code(500).send(err);
+      if(typeof filter.limt != 'number' || filter.limit <= 0 && filter.limit >= 50){
+        filter.limit = 10;
       }
-    },
 
-    getOne: async function(req,reply){
-      try{
-        const _id = req.params._id;
-        const student = await Student.findById(_id);
+      const student = await  Student.find(filter.where)
+                                    .sort(filter.sort)
+                                    .skip(filter.skip)
+                                    .limit(filter.limit);
+                                    
+      const count = await Student.countDocuments(filter.where);
 
-        reply.code(200).send({student: student});
-      }catch(err){
-        req.log.error(err);
-        reply.code(500).send(err);
-      }
-    },
-
-    putOne: async function(req,reply){
-      try{
-        const _id = req.params._id;
-        const updates = req.body;
-        const student = await Student.findOneAndReplace({_id: _id},updates,{new:true});
-
-        reply.code(200).send({student: student});
-      }catch(err){
-        req.log.error(err);
-        reply.code(500).send(err);
-      }
-    },
-
-    patchOne: async function(req,reply){
-      try{
-        const _id = req.params._id;
-        const updates = req.body;
-        const student = await Student.findByIdAndUpdate(_id,{$set:updates},{new:true});
-
-        reply.code(200).send({student: student});
-      }catch(err){
-        req.log.error(err);
-        reply.code(500).send(err);
-      }
-    },
-
-    deleteOne: async function(req,reply){
-      try{
-        const _id = req.params._id;
-        const student = await Student.findByIdAndRemove(_id);
-
-        reply.code(200).send({student: student});
-      }catch(err){
-        req.log.error(err);
-        reply.code(500).send(err);
-      }
+      reply.code(200).send({count : count, pagination_data: student});
+    }catch(err){
+      req.log.error(err);
+      reply.code(500).send(err);
     }
+  },
 
+  getOne: async function(req,reply){
+    try{
+      const _id = req.params._id;
+      const student = await Student.findById(_id);
+
+      reply.code(200).send({student: student});
+    }catch(err){
+      req.log.error(err);
+      reply.code(500).send(err);
+    }
+  },
+
+  putOne: async function(req,reply){
+    try{
+      const _id = req.params._id;
+      const updates = req.body;
+      const student = await Student.findOneAndReplace({_id: _id},updates,{new:true});
+
+      reply.code(200).send({student: student});
+    }catch(err){
+      req.log.error(err);
+      reply.code(500).send(err);
+    }
+  },
+
+  patchOne: async function(req,reply){
+    try{
+      const _id = req.params._id;
+      const updates = req.body;
+      const student = await Student.findByIdAndUpdate(_id,{$set:updates},{new:true});
+
+      reply.code(200).send({student: student});
+    }catch(err){
+      req.log.error(err);
+      reply.code(500).send(err);
+    }
+  },
+
+  deleteOne: async function(req,reply){
+    try{
+      const _id = req.params._id;
+      const student = await Student.findByIdAndRemove(_id);
+
+      reply.code(200).send({student: student});
+    }catch(err){
+      req.log.error(err);
+      reply.code(500).send(err);
+    }
   }
+
+}
