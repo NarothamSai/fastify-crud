@@ -89,6 +89,13 @@ module.exports = {
       try{
         filter = await JSON.parse(req.query.filter);
         filter.sort = makeMongooseSort(filter.order);
+
+        for(const prop in filter.where){
+          if(typeof filter.where[prop] == 'string'){
+            filter.where[prop] = {$regex : filter.where[prop]};
+          }
+        }
+
       }catch(err){
         req.log.error(err);
       }
@@ -101,7 +108,7 @@ module.exports = {
                                     .sort(filter.sort)
                                     .skip(filter.skip)
                                     .limit(filter.limit);
-                                    
+
       const count = await Student.countDocuments(filter.where);
 
       reply.code(200).send({count : count, pagination_data: student});
