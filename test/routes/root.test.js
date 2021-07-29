@@ -7,9 +7,11 @@ test('default root route', async (t) => {
   const app = build(t)
 
   const res = await app.inject({
-    url: '/'
+    url: '/',
   })
+
   t.same(JSON.parse(res.payload), { root: true })
+  t.end()
 })
 
 // inject callback style:

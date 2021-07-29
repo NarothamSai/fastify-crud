@@ -10,6 +10,7 @@ test('support works standalone', async (t) => {
 
   await fastify.ready()
   t.equal(fastify.someSupport(), 'hugs')
+  t.end()
 })
 
 // You can also use plugin with opts in fastify v2
