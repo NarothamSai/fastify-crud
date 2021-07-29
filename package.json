@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "tap \"test/**/*.test.js\"",
+    "test": "env $(cat .env) tap \"test/**/*.test.js\" --no-coverage",
     "start": "fastify start -l info app.js",
     "dev": "fastify start -w -l info -P app.js",
     "reload": "nodemon fastify start -w -l info -P app.js"
@@ -23,11 +23,10 @@
     "fastify-plugin": "^3.0.0",
     "fastify-sensible": "^3.1.0",
     "fastify-swagger": "^4.8.3",
-    "mongoose": "^5.13.3",
-    "nodemon": "^2.0.12",
-    "qs": "^6.10.1"
+    "mongoose": "^5.13.3"
   },
   "devDependencies": {
-    "tap": "^15.0.9"
+    "tap": "^15.0.9",
+    "nodemon": "^2.0.12"
   }
 }
