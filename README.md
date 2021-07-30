@@ -21,7 +21,7 @@ npm init fastify
 npm install
 ```
 
-Create file with name `.env` by filling values of fields in `env.example`
+Create file `.env`, copy fields of `env.example` and fill them with your values
 
 ### Development
 
